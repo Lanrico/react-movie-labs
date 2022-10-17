@@ -1,18 +1,12 @@
-import React, {useState, useEffect}  from "react";
+import React from "react";
 import { useParams } from 'react-router-dom';
 import MovieDetails from "../components/movieDetails/";
 import PageTemplate from "../components/templateMoviePage";
-import { getMovie } from "../api/tmdb-api";
+import useMovie from "../hooks/useMovie";
 
 const MoviePage = (props) => {
   const { id } = useParams();
-  const [movie, setMovie] = useState(null);
-
-  useEffect(() => {
-    getMovie(id).then((movie) => {
-      setMovie(movie);
-    });
-  }, [id]);
+  const [movie] = useMovie(id);
 
   return (
     <>
