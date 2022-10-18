@@ -38,7 +38,7 @@ describe("Filtering", () => {
       cy.get(".MuiCardHeader-content").should("have.length", 0);
     });
   });
-  
+
   describe("By movie genre", () => {
     it("show movies with the selected genre", () => {
       const selectedGenreId = 35;
@@ -55,7 +55,34 @@ describe("Filtering", () => {
       });
     });
   });
+
   describe("Combined genre and title", () => {
-    // TODO
+    it("show movies with the selected genre and with 'o' in the title", () => {
+      const selectedGenreId = 35;
+      const selectedGenreText = "Comedy";
+      const searchString = "o";
+      const matchingMovies = filterByGenre(filterByTitle(movies, searchString), selectedGenreId) ;
+      cy.get("#filled-search").clear().type(searchString);
+      cy.get("#genre-select").click();
+      cy.get("li").contains(selectedGenreText).click();
+      cy.get(".MuiCardHeader-content").should(
+        "have.length",
+        matchingMovies.length
+      );
+      cy.get(".MuiCardHeader-content").each(($card, index) => {
+        cy.wrap($card).find("p").contains(matchingMovies[index].title);
+      });
+    })
+    it("handles cases when there are not matches", () => {
+      const selectedGenreId = 35;
+      const selectedGenreText = "Comedy";
+      const searchString = "hgmgmghmghm";
+      const matchingMovies = filterByGenre(filterByTitle(movies, searchString), selectedGenreId) ;
+      cy.get("#filled-search").clear().type(searchString);
+      cy.get("#genre-select").click();
+      cy.get("li").contains(selectedGenreText).click();
+
+      cy.get(".MuiCardHeader-content").should("have.length", 0);
+    })
   });
 });
