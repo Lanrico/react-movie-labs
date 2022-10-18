@@ -4,10 +4,10 @@ let movieId; // Enola Holmes movie id
 describe("Navigation", () => {
   before(() => {
     cy.request(
-      `https://api.themoviedb.org/3/discover/movie?api_key=${Cypress.env(
+        `https://api.themoviedb.org/3/discover/movie?api_key=${Cypress.env(
         "TMDB_KEY"
       )}&language=en-US&include_adult=false&include_video=false&page=1`
-    )
+      )
       .its("body")
       .then((response) => {
         movies = response.results;
@@ -32,8 +32,7 @@ describe("Navigation", () => {
       });
     });
     describe(
-      "when the viewport is a mobile scale",
-      {
+      "when the viewport is a mobile scale", {
         viewportHeight: 896,
         viewportWidth: 414,
       },
@@ -49,7 +48,16 @@ describe("Navigation", () => {
     );
   });
   describe("From the favourites page to a movie's details", () => {
-    // TODO
+    beforeEach(() => {
+      // Select two favourites and navigate to Favourites page
+      cy.get("button[aria-label='add to favorites']").eq(1).click();
+      cy.get("button[aria-label='add to favorites']").eq(3).click();
+      cy.get("button").contains("Favorites").click();
+    });
+    it("navigates to the movie details page and change browser URL", () => {
+      cy.get(".MuiCardActions-root").eq(1).contains("More Info").click();
+      cy.url().should("include", `/movies/${movies[3].id}`);
+    });
   });
   describe("The forward/backward links", () => {
     beforeEach(() => {
